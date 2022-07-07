@@ -11,8 +11,9 @@ import sys
 from datetime import *
 from typing import List
 import pandas as pd
+# changed following to relative imports to fix ModuleNotFoundError
 from .enums import *
-from utility import download_file, get_all_symbols, get_parser, get_start_end_date_objects, convert_to_date_object, \
+from .utility import download_file, get_all_symbols, get_parser, get_start_end_date_objects, convert_to_date_object, \
   get_path
 
 
