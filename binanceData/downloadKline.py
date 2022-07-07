@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
   script to download klines.
   set the absoluate path destination folder for STORE_DIRECTORY, and run
