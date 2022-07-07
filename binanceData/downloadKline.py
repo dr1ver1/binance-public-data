@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
   script to download klines.
   set the absoluate path destination folder for STORE_DIRECTORY, and run
@@ -9,7 +11,7 @@ import sys
 from datetime import *
 from typing import List
 import pandas as pd
-from enums import *
+from .enums import *
 from utility import download_file, get_all_symbols, get_parser, get_start_end_date_objects, convert_to_date_object, \
   get_path
 
