@@ -9,6 +9,7 @@
 """
 import sys
 from datetime import *
+from typing import List
 import pandas as pd
 from enums import *
 from utility import download_file, get_all_symbols, get_parser, get_start_end_date_objects, convert_to_date_object, \
@@ -90,27 +91,55 @@ def download_daily_klines(trading_type, symbols, num_symbols, intervals, dates, 
 
     current += 1
 
+def main(argList:List):
+  # Function added by DS so that script called be called from CLI or from Python
+  
+  parser = get_parser('klines')
+  args = parser.parse_args(argList)
+
+  if not args.symbols:
+    print("fetching all symbols from exchange")
+    symbols = get_all_symbols(args.type)
+    num_symbols = len(symbols)
+  else:
+    symbols = args.symbols
+    num_symbols = len(symbols)
+
+  if args.dates:
+    dates = args.dates
+  else:
+    period = convert_to_date_object(datetime.today().strftime('%Y-%m-%d')) - convert_to_date_object(
+      PERIOD_START_DATE)
+    dates = pd.date_range(end=datetime.today(), periods=period.days + 1).to_pydatetime().tolist()
+    dates = [date.strftime("%Y-%m-%d") for date in dates]
+    if args.skip_monthly == 0:
+      download_monthly_klines(args.type, symbols, num_symbols, args.intervals, args.years, args.months, args.startDate, args.endDate, args.folder, args.checksum)
+  if args.skip_daily == 0:
+    download_daily_klines(args.type, symbols, num_symbols, args.intervals, dates, args.startDate, args.endDate, args.folder, args.checksum)
+
+
 if __name__ == "__main__":
-    parser = get_parser('klines')
-    args = parser.parse_args(sys.argv[1:])
+  # parser = get_parser('klines')
+  # args = parser.parse_args(sys.argv[1:])
+  main(sys.argv[1:])
 
-    if not args.symbols:
-      print("fetching all symbols from exchange")
-      symbols = get_all_symbols(args.type)
-      num_symbols = len(symbols)
-    else:
-      symbols = args.symbols
-      num_symbols = len(symbols)
+  # if not args.symbols:
+  #   print("fetching all symbols from exchange")
+  #   symbols = get_all_symbols(args.type)
+  #   num_symbols = len(symbols)
+  # else:
+  #   symbols = args.symbols
+  #   num_symbols = len(symbols)
 
-    if args.dates:
-      dates = args.dates
-    else:
-      period = convert_to_date_object(datetime.today().strftime('%Y-%m-%d')) - convert_to_date_object(
-        PERIOD_START_DATE)
-      dates = pd.date_range(end=datetime.today(), periods=period.days + 1).to_pydatetime().tolist()
-      dates = [date.strftime("%Y-%m-%d") for date in dates]
-      if args.skip_monthly == 0:
-        download_monthly_klines(args.type, symbols, num_symbols, args.intervals, args.years, args.months, args.startDate, args.endDate, args.folder, args.checksum)
-    if args.skip_daily == 0:
-      download_daily_klines(args.type, symbols, num_symbols, args.intervals, dates, args.startDate, args.endDate, args.folder, args.checksum)
+  # if args.dates:
+  #   dates = args.dates
+  # else:
+  #   period = convert_to_date_object(datetime.today().strftime('%Y-%m-%d')) - convert_to_date_object(
+  #     PERIOD_START_DATE)
+  #   dates = pd.date_range(end=datetime.today(), periods=period.days + 1).to_pydatetime().tolist()
+  #   dates = [date.strftime("%Y-%m-%d") for date in dates]
+  #   if args.skip_monthly == 0:
+  #     download_monthly_klines(args.type, symbols, num_symbols, args.intervals, args.years, args.months, args.startDate, args.endDate, args.folder, args.checksum)
+  # if args.skip_daily == 0:
+  #   download_daily_klines(args.type, symbols, num_symbols, args.intervals, dates, args.startDate, args.endDate, args.folder, args.checksum)
 
